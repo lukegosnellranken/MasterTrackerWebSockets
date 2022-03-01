@@ -1,0 +1,122 @@
+html {
+    height: 100%;
+}
+
+body {
+    background: rgb(253,45,45);
+    background: linear-gradient(0deg, rgba(253,45,45,1) 0%, rgba(245,245,220,1) 35%);
+}
+
+.header {
+    display: flex;
+    justify-content: center;
+    padding-top: 2%;
+}
+
+.subtitle {
+    text-align: center;
+}
+
+.addAndRemove {
+    display: flex;
+    justify-content: center;
+    padding-top: 2%;
+}
+
+.addAndRemove div {
+    padding: 0;
+    display: inline-block;
+    margin-left: 1%;
+    margin-right: 1%;
+}
+
+.pkmnName {
+    text-align: center;
+    margin-top: 15%;
+}
+
+.sprite-item {
+    margin-top: 15%;
+    display: flex;
+    justify-content: center;
+}
+
+.fullList {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    margin: 0;
+}
+
+#fullList-ul {
+    list-style-type: none;
+    padding: 0;
+    width: 100%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: baseline;
+    flex-wrap: wrap;
+}
+
+#fullList-ul ul{
+    list-style-type: none;
+    padding: 0;
+    display: inline-block;
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-top: 2%;
+    margin-bottom: 2%;
+    
+}
+
+.hideAddRemove {
+    display: none;
+}
+
+.showAddRemove{
+    display: inline-block;
+}
+
+
+.ss-li-ul {
+    display: flex;
+    justify-content: center;
+}
+
+.inputElement {
+    text-align: center;
+    width: 100%;
+}
+
+.ss-ul li {
+    display: flex;
+    justify-content: center;
+}
+
+.exp-li-ul li {
+    display: inline-flex;
+    justify-content: center;
+}
+
+.input-li {
+    width: 70%;
+}
+
+.addExpBtn-li {
+    width: 30%;
+}
+
+.trade-li {
+    display: flex;
+    justify-content: center;
+}
+
+.trade-li-ul {
+    display: inline-flex;
+    justify-content: center;
+}
+
+.trade-li-ul li {
+    display: inline-block;
+    justify-content: center;
+}

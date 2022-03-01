@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Level Tracker</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css" media="screen" />
+</head>
+<body onload="onPageLoad()">
+    <header>
+        <div class="header">
+            <img id="title" src="./images/mastertracker.png">
+        </div>
+    </header>
+    <br>
+    <div class="main">
+        <div class="caughtDiv"> 
+            <h4 class="subtitle">Captured Pokemon</h4>
+            <div class="lists">
+                <ul id="spriteList"></ul>
+                <ul id="caughtList"></ul>
+                <ul id="experienceList"></ul>
+            </div>
+            <div class="fullList">
+                <ul id="fullList-ul"></ul>
+            </div>
+        </div>
+        <div class="addAndRemove">
+            <div class="addPokemon">
+                <select name="Pokemon" id="selectPokemon"></select>
+                <button id="add" onclick="addPokemon()">Add</button>
+            </div>
+            <div class="removePokemon">
+                <select name="Pokemon" id="selectPokemonRemove"></select>
+                <button id="sub" onclick="removePokemon()">Remove</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/script2.js"></script>
+</body>
+</html>
