@@ -114,7 +114,7 @@ function addPokemon() {
     for (let i = 0; i < all.length; i++) {
         if (all[i].name == selectedPokemon) {
             // shiny chance (1/100)
-            let shinyChance = Math.floor(Math.random() * 3);
+            let shinyChance = Math.floor(Math.random() * 101);
             if (shinyChance == 1) {
                 all[i].shiny = 1;
             }

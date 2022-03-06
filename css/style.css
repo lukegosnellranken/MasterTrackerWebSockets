@@ -13,6 +13,10 @@ body {
     padding-top: 2%;
 }
 
+#titleImage {
+    width: 40%;
+}
+
 .subtitle {
     text-align: center;
 }
@@ -119,4 +123,24 @@ body {
 .trade-li-ul li {
     display: inline-block;
     justify-content: center;
+}
+
+
+
+@media only screen and (max-width: 800px) {
+    #titleImage {
+        width: 50%;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    #titleImage {
+        width: 60%;
+    }
+}
+
+@media only screen and (max-width: 375px) {
+    #titleImage {
+        width: 70%;
+    }
 }
