@@ -1,3 +1,12 @@
+/*
+TO-DO
+--------------------------------------------------------------------------------------
+- Sort dropdown by pokedex number
+- Full websocket.io integration
+- Evolution experience carry-over
+- Multiple trainers lists
+*/
+
 // Websocket
 // URL endpoint of websocket
 const socket = new WebSocket('wss://qh051xlm46.execute-api.us-east-2.amazonaws.com/production');
@@ -39,9 +48,15 @@ const selectPokemonSubBtn = document.getElementById("sub");
 const fullList = document.getElementById("fullList-ul");
 
 // pokemon with initial values
-let bulbasaur = {name:"Bulbasaur", type:"grass", level:4, base:5, exp:4, stage:1, line:"bulbasaur", evolve:0, shiny:0, player: 0, remove: 0};
-let ivysaur = {name:"Ivysaur", type:"grass", level:6, base:7, exp:6, stage:2, line:"bulbasaur", evolve:0, shiny:0, player: 0, remove: 0};
-let venusaur = {name:"Venusaur", type:"grass", level:8, base:9, exp:8, stage:3, line:"bulbasaur", evolve:0, shiny:0, player: 0, remove: 0};
+let bulbasaur = {name:"Bulbasaur", pokedex:1, type:"grass", level:4, base:5, exp:4, stage:1, line:"bulbasaur", evolve:0, shiny:0, player: 0, remove: 0};
+let ivysaur = {name:"Ivysaur", pokedex:2, type:"grass", level:6, base:7, exp:6, stage:2, line:"bulbasaur", evolve:0, shiny:0, player: 0, remove: 0};
+let venusaur = {name:"Venusaur", pokedex:3, type:"grass", level:8, base:9, exp:8, stage:3, line:"bulbasaur", evolve:0, shiny:0, player: 0, remove: 0};
+let squirtle = {name:"Squirtle", pokedex:4, type:"water", level:4, base:5, exp:4, stage:1, line:"squirtle", evolve:0, shiny:0, player: 0, remove: 0};
+let wartortle = {name:"Wartortle", pokedex:5, type:"water", level:6, base:7, exp:6, stage:2, line:"squirtle", evolve:0, shiny:0, player: 0, remove: 0};
+let blastoise = {name:"Blastoise", pokedex:6, type:"water", level:8, base:9, exp:8, stage:3, line:"squirtle", evolve:0, shiny:0, player: 0, remove: 0};
+let charmander = {name:"Charmander", pokedex:7, type:"water", level:4, base:5, exp:4, stage:1, line:"charmander", evolve:0, shiny:0, player: 0, remove: 0};
+let charmeleon = {name:"Charmeleon", pokedex:8, type:"water", level:6, base:7, exp:6, stage:2, line:"charmander", evolve:0, shiny:0, player: 0, remove: 0};
+let charizard = {name:"Charizard", pokedex:9, type:"water", level:8, base:9, exp:8, stage:3, line:"charmander", evolve:0, shiny:0, player: 0, remove: 0};
 
 function onPageLoad() {
     // push pokemon variable objects to all array
@@ -53,7 +68,7 @@ function onPageLoad() {
 }
 
 function populateAll() {
-    all.push(bulbasaur, ivysaur, venusaur);
+    all.push(bulbasaur, ivysaur, venusaur, squirtle, wartortle, blastoise, charmander, charmeleon, charizard);
 }
 
 function populateDropdown() {
@@ -149,12 +164,21 @@ function removePokemon() {
     for (let i = 0; i < caught.length; i++) {
         if (caught[i].name == selectedPokemon) {
             all.push(caught[i]);
+
             // remove removed pokemon from the evolutionRemove array
             for (let i2 = 0; i2 < evolutionRemove.length; i2++) {
+                console.log("i2 iteration: " + evolutionRemove[i2].name);
                 // remove all stages of removed pokemon
+                // two separate iterations required, as evolutionRemove length meets first iteration standard after the first pokemon is removed.
                 if (caught[i].line == evolutionRemove[i2].line) {
-                    console.log("line removed: " + evolutionRemove[i2].line);
                     evolutionRemove.splice(i2,1);
+                    //console.log(evolutionCheck.length, i2);
+                    for (let i3 = 0; i3 < evolutionRemove.length; i3++) {
+                        //console.log("i3 iteration: " + evolutionRemove[i3].name);
+                        if (caught[i].line == evolutionRemove[i3].line) {
+                            evolutionRemove.splice(i3,1);
+                        }
+                    }
                 }
             }
         }
