@@ -28,6 +28,7 @@ window.ask = function (msg) {
 // arrays
 const all = [];
 const caught = [];
+const evolutionRemove = [];
 const caughtObjects = [];
 
 // get elements
@@ -38,9 +39,9 @@ const selectPokemonSubBtn = document.getElementById("sub");
 const fullList = document.getElementById("fullList-ul");
 
 // pokemon with initial values
-let bulbasaur = {name:"Bulbasaur", type:"grass", level:4, base:5, exp:4, stage:1, line:"bulbasaur", shiny:0, player: 0};
-let ivysaur = {name:"Ivysaur", type:"grass", level:6, base:7, exp:6, stage:2, line:"bulbasaur", shiny:0, player: 0};
-let venusaur = {name:"Venusaur", type:"grass", level:8, base:9, exp:8, stage:3, line:"bulbasaur", shiny:0, player: 0};
+let bulbasaur = {name:"Bulbasaur", type:"grass", level:4, base:5, exp:4, stage:1, line:"bulbasaur", evolve:0, shiny:0, player: 0, remove: 0};
+let ivysaur = {name:"Ivysaur", type:"grass", level:6, base:7, exp:6, stage:2, line:"bulbasaur", evolve:0, shiny:0, player: 0, remove: 0};
+let venusaur = {name:"Venusaur", type:"grass", level:8, base:9, exp:8, stage:3, line:"bulbasaur", evolve:0, shiny:0, player: 0, remove: 0};
 
 function onPageLoad() {
     // push pokemon variable objects to all array
@@ -133,6 +134,7 @@ function addPokemon() {
     populateDropdown();
     // rebuild caught object array for captured pokemon
     buildCaughtObjects();
+    buildCaughtObjects();
     // add caught pokemon to visible list
     addToFullList();
     // check for empty all/remove arrays
@@ -147,6 +149,14 @@ function removePokemon() {
     for (let i = 0; i < caught.length; i++) {
         if (caught[i].name == selectedPokemon) {
             all.push(caught[i]);
+            // remove removed pokemon from the evolutionRemove array
+            for (let i2 = 0; i2 < evolutionRemove.length; i2++) {
+                // remove all stages of removed pokemon
+                if (caught[i].line == evolutionRemove[i2].line) {
+                    console.log("line removed: " + evolutionRemove[i2].line);
+                    evolutionRemove.splice(i2,1);
+                }
+            }
         }
     }
 
@@ -161,6 +171,7 @@ function removePokemon() {
     populateDropdown();
     // rebuild caught object array for captured pokemon
     buildCaughtObjects();
+    buildCaughtObjects();
     // add caught pokemon to visible list
     addToFullList();
     // check for empty all/remove arrays
@@ -173,6 +184,10 @@ function buildCaughtObjects() {
 
     // repopulate caughtObjects array
     for (var i = 0; i < caught.length; i++) {
+        // shiny check
+        let shinyFlag = shinyCheck(caught[i]);
+        // evolution check
+        let evolutionFlag = evolutionCheck(caught[i]);
         // build object for every caught pokemon
         let obj = {};
         let name = caught[i].name;
@@ -180,12 +195,87 @@ function buildCaughtObjects() {
         let base = caught[i].base;
         let exp = caught[i].exp;
         let shiny = caught[i].shiny;
+
+        // update shiny value
+        if (shinyFlag == 1) {
+            shiny = 1;
+        }
+
+        // add evolution bonus to base attack
+        if (evolutionFlag == 2) {
+            base = base + 3;
+        }
+        else if (evolutionFlag == 3) {
+            base = base + 5;
+        }
+
         obj.name = name;
         obj.sprite = "https://img.pokemondb.net/sprites/black-white/anim/normal/" + caught[i].name.toLowerCase() + ".gif";
         obj.stats =  " Lvl: " + level + " Atk: " + base + " Exp: " + exp;
         obj.shiny = shiny;
-        // push built object to caughtObjects array
-        caughtObjects.push(obj);
+        // push built object to caughtObjects array if the evolutionRemove array does not contain the current pokemon
+        console.log(evolutionRemove);
+        if (evolutionRemove.includes(caught[i]) === false) {
+            caughtObjects.push(obj);
+        }
+    }
+}
+
+function shinyCheck(pkmn) {
+    for (var i = 0; i < caught.length; i++) {
+        if (caught[i].line == pkmn.line) {
+            if (caught[i].shiny == 1) {
+                return 1;
+            }
+        }
+    }
+}
+
+function evolutionCheck(pkmn) {
+    // first check for stage 3 pokemon, then stage 2, etc.
+    let lineAmount = 0;
+    if (pkmn.stage == 3) {
+        for (i = 0; i < caught.length; i++) {
+            if (caught[i].line == pkmn.line) {
+                lineAmount++;
+            }
+        }
+        if (lineAmount == 3) {
+            // remove other pokemon in line from caught array
+            for (var i = 0; i < caught.length; i++) {
+                if (caught[i].line == pkmn.line && caught[i].stage != 3) {
+                    // if pokemon does not yet exist in evolutionRemove array, add it
+                    console.log("evolutionRemove: " + caught[i].name);
+                    if (evolutionRemove.includes(caught[i]) === false) {
+                        evolutionRemove.push(caught[i]);
+                    }
+                }
+            }
+            return 3;
+        }
+    }
+    else if (pkmn.stage == 2) {
+        for (i = 0; i < caught.length; i++) {
+            if (caught[i].line == pkmn.line) {
+                if (caught[i].stage == 1) {
+                    // remove other pokemon in line from caught array
+                    if (caught[i].line == pkmn.line && (caught[i].stage != 2 || caught[i].stage != 3)) {
+                        // if pokemon does not yet exist in evolutionRemove array, add it
+                        console.log("evolutionRemove: " + caught[i].name);
+                        if (evolutionRemove.includes(caught[i]) === false) {
+                            evolutionRemove.push(caught[i]);
+                        }
+                    }
+                    return 2;
+                }
+            }
+        }
+    }
+    else if (pkmn.stage == 1) {
+        return 1;
+    }
+    else {
+        return 0;
     }
 }
 
@@ -370,6 +460,7 @@ function addExp(pkmn) {
     // check levels, rebuild caughtObjects, and repopulate full list
     checkLevel();
     buildCaughtObjects();
+    buildCaughtObjects();
     addToFullList();
 }
 
@@ -388,6 +479,7 @@ function setLvl(pkmn) {
     }
     // check levels, rebuild caughtObjects, and repopulate full list
     checkLevel();
+    buildCaughtObjects();
     buildCaughtObjects();
     addToFullList();
 }
@@ -408,6 +500,7 @@ function setAtk(pkmn) {
     // check levels, rebuild caughtObjects, and repopulate full list
     checkLevel();
     buildCaughtObjects();
+    buildCaughtObjects();
     addToFullList();
 }
 
@@ -426,6 +519,7 @@ function setExp(pkmn) {
     }
     // check levels, rebuild caughtObjects, and repopulate full list
     checkLevel();
+    buildCaughtObjects();
     buildCaughtObjects();
     addToFullList();
 }
