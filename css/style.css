@@ -125,6 +125,11 @@ body {
     justify-content: center;
 }
 
+.li-bonus p {
+    font-size: 80%;
+    margin-top: -6%;
+    margin-bottom: 0%;
+}
 
 
 @media only screen and (max-width: 800px) {

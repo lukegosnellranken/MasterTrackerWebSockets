@@ -152,8 +152,6 @@ function addPokemon() {
     // rebuild caught object array for captured pokemon
     buildCaughtObjects();
     buildCaughtObjects();
-    // carry over experience through evolution
-    //addEvolutionExp();
     // add caught pokemon to visible list
     addToFullList();
     // check for empty all/remove arrays
@@ -200,8 +198,6 @@ function removePokemon() {
     // rebuild caught object array for captured pokemon
     buildCaughtObjects();
     buildCaughtObjects();
-    // carry over experience through evolution
-    //addEvolutionExp();
     // add caught pokemon to visible list
     addToFullList();
     // check for empty all/remove arrays
@@ -225,10 +221,12 @@ function buildCaughtObjects() {
         let base = caught[i].base;
         let exp = caught[i].exp;
         let shiny = caught[i].shiny;
+        let evolve = caught[i].evolve;
 
         // update shiny value
         if (shinyFlag == 1) {
             shiny = 1;
+            base = base + 3;
         }
 
         // carry over gained lvl, atk, and exp through evolution
@@ -244,6 +242,8 @@ function buildCaughtObjects() {
             }
             // add evolution bonus to base attack
             base = base + 3;
+            // update evolve value
+            evolve = 1;
         }
         // pokemon is stage 3
         else if (evolutionFlag == 3) {
@@ -262,11 +262,14 @@ function buildCaughtObjects() {
             }
             // add evolution bonus to base attack
             base = base + 5;
+            // update evolve value
+            evolve = 2;
         }
 
         obj.name = name;
         obj.sprite = "https://img.pokemondb.net/sprites/black-white/anim/normal/" + caught[i].name.toLowerCase() + ".gif";
         obj.stats =  " Lvl: " + level + " Atk: " + base + " Exp: " + exp;
+        obj.evolve = evolve;
         obj.shiny = shiny;
         // push built object to caughtObjects array if the evolutionRemove array does not contain the current pokemon
         console.log(evolutionRemove);
@@ -334,21 +337,6 @@ function evolutionCheck(pkmn) {
     }
 }
 
-// function addEvolutionExp() {
-//     // iterate through caught array
-//     for (i = 0; i < caught.length; i++) {
-//         // for every item in caught array, iterate through caughtObjects array
-//         for (i2 = 0; i < caughtObjects.length; i++) {
-//             // if caughtObject item 
-//             if (caughtObjects[i2].line == caught[i].line) {
-//                 if (caughtObjects[i2].name != caught[i].name) {
-
-//                 }
-//             }
-//         }
-//     }
-// }
-
 function addToFullList() {
     // depopulate full list
     fullList.innerHTML = "";
@@ -411,6 +399,11 @@ function spriteStatComponent(co) {
     // create liSprite, liStats, and liExp
     let liSprite = document.createElement("li");
     let liStats = document.createElement("li");
+    let liBonus = document.createElement("li");
+
+    //set liBonus attributes
+    liBonus.setAttribute("class", "li-bonus");
+    liBonus.setAttribute("id", co.name.toLowerCase() + "-li-bonus");
 
     let img = document.createElement("img");
     // grab sprite from external site. normal or shiny depending on caughtObject's shiny value
@@ -421,17 +414,42 @@ function spriteStatComponent(co) {
     }
     // set img attributes
     img.setAttribute("class", "sprite");
-    img.setAttribute("id", co.name + "-sprite");
+    img.setAttribute("id", co.name.toLowerCase() + "-sprite");
 
     // create p element for statsText, set its textContent and add it to liStats (li element)
     let statsText = document.createElement("p");
     statsText.textContent = co.stats;
     liStats.appendChild(statsText);
 
+    // set bonusTextContent
+    let bonusTextContent = "";
+    if (co.evolve == 1 || co.evolve == 2) {
+        bonusTextContent = "Evolution";
+    }
+    if (co.shiny == 1) {
+        bonusTextContent = "Shiny";
+    }
+    if ((co.evolve == 1 || co.evolve == 2) && co.shiny == 1) {
+        bonusTextContent = "Evolution, Shiny";
+    }
+    if ((co.evolve !== 1 && co.evolve !== 2) && co.shiny !== 1) {
+        bonusTextContent = "None";
+    }
+
+    // create p element for bonus
+    let bonusText = document.createElement("p");
+    //set bonusText attributes
+    bonusText.setAttribute("class", "bonus");
+    bonusText.setAttribute("id", co.name.toLowerCase() + "-bonus");
+    // set textContent and append
+    bonusText.textContent = "Bonus: " + bonusTextContent;
+    liBonus.appendChild(bonusText);
+
     // img < liSprite = liStats < spriteAndStatsUl < returnedLi
     liSprite.appendChild(img);
     spriteAndStatsUl.appendChild(liSprite);
     spriteAndStatsUl.appendChild(liStats);
+    spriteAndStatsUl.appendChild(liBonus);
     returnedLi.appendChild(spriteAndStatsUl);
     // return returnedLi to addToFullList()
     return returnedLi;
