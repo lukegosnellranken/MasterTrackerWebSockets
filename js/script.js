@@ -2,9 +2,11 @@
 TO-DO
 --------------------------------------------------------------------------------------
 - Sort dropdown by pokedex number
+- Show bonuses (evolution and shiny)
 - Full websocket.io integration
 - Evolution experience carry-over
 - Multiple trainers lists
+--------------------------------------------------------------------------------------
 */
 
 // Websocket
@@ -48,15 +50,15 @@ const selectPokemonSubBtn = document.getElementById("sub");
 const fullList = document.getElementById("fullList-ul");
 
 // pokemon with initial values
-let bulbasaur = {name:"Bulbasaur", pokedex:1, type:"grass", level:4, base:5, exp:4, stage:1, line:"bulbasaur", evolve:0, shiny:0, player: 0, remove: 0};
-let ivysaur = {name:"Ivysaur", pokedex:2, type:"grass", level:6, base:7, exp:6, stage:2, line:"bulbasaur", evolve:0, shiny:0, player: 0, remove: 0};
-let venusaur = {name:"Venusaur", pokedex:3, type:"grass", level:8, base:9, exp:8, stage:3, line:"bulbasaur", evolve:0, shiny:0, player: 0, remove: 0};
-let squirtle = {name:"Squirtle", pokedex:4, type:"water", level:4, base:5, exp:4, stage:1, line:"squirtle", evolve:0, shiny:0, player: 0, remove: 0};
-let wartortle = {name:"Wartortle", pokedex:5, type:"water", level:6, base:7, exp:6, stage:2, line:"squirtle", evolve:0, shiny:0, player: 0, remove: 0};
-let blastoise = {name:"Blastoise", pokedex:6, type:"water", level:8, base:9, exp:8, stage:3, line:"squirtle", evolve:0, shiny:0, player: 0, remove: 0};
-let charmander = {name:"Charmander", pokedex:7, type:"water", level:4, base:5, exp:4, stage:1, line:"charmander", evolve:0, shiny:0, player: 0, remove: 0};
-let charmeleon = {name:"Charmeleon", pokedex:8, type:"water", level:6, base:7, exp:6, stage:2, line:"charmander", evolve:0, shiny:0, player: 0, remove: 0};
-let charizard = {name:"Charizard", pokedex:9, type:"water", level:8, base:9, exp:8, stage:3, line:"charmander", evolve:0, shiny:0, player: 0, remove: 0};
+let bulbasaur = {name:"Bulbasaur", pokedex:1, type:"grass", level:4, levelPlus:0, base:5, basePlus:0, exp:4, expPlus:0, stage:1, line:"bulbasaur", evolve:0, shiny:0, player: 0, remove: 0};
+let ivysaur = {name:"Ivysaur", pokedex:2, type:"grass", level:6, levelPlus:0, base:7, basePlus:0, exp:6, expPlus:0, stage:2, line:"bulbasaur", evolve:0, shiny:0, player: 0, remove: 0};
+let venusaur = {name:"Venusaur", pokedex:3, type:"grass", level:8, levelPlus:0, base:9, basePlus:0, exp:8, expPlus:0, stage:3, line:"bulbasaur", evolve:0, shiny:0, player: 0, remove: 0};
+let squirtle = {name:"Squirtle", pokedex:4, type:"water", level:4, levelPlus:0, base:5, basePlus:0, exp:4, expPlus:0, stage:1, line:"squirtle", evolve:0, shiny:0, player: 0, remove: 0};
+let wartortle = {name:"Wartortle", pokedex:5, type:"water", level:6, levelPlus:0, base:7, basePlus:0, exp:6, expPlus:0, stage:2, line:"squirtle", evolve:0, shiny:0, player: 0, remove: 0};
+let blastoise = {name:"Blastoise", pokedex:6, type:"water", level:8, levelPlus:0, base:9, basePlus:0, exp:8, expPlus:0, stage:3, line:"squirtle", evolve:0, shiny:0, player: 0, remove: 0};
+let charmander = {name:"Charmander", pokedex:7, type:"water", level:4, levelPlus:0, base:5, basePlus:0, exp:4, expPlus:0, stage:1, line:"charmander", evolve:0, shiny:0, player: 0, remove: 0};
+let charmeleon = {name:"Charmeleon", pokedex:8, type:"water", level:6, levelPlus:0, base:7, basePlus:0, exp:6, expPlus:0, stage:2, line:"charmander", evolve:0, shiny:0, player: 0, remove: 0};
+let charizard = {name:"Charizard", pokedex:9, type:"water", level:8, levelPlus:0, base:9, basePlus:0, exp:8, expPlus:0, stage:3, line:"charmander", evolve:0, shiny:0, player: 0, remove: 0};
 
 function onPageLoad() {
     // push pokemon variable objects to all array
@@ -150,6 +152,8 @@ function addPokemon() {
     // rebuild caught object array for captured pokemon
     buildCaughtObjects();
     buildCaughtObjects();
+    // carry over experience through evolution
+    //addEvolutionExp();
     // add caught pokemon to visible list
     addToFullList();
     // check for empty all/remove arrays
@@ -196,6 +200,8 @@ function removePokemon() {
     // rebuild caught object array for captured pokemon
     buildCaughtObjects();
     buildCaughtObjects();
+    // carry over experience through evolution
+    //addEvolutionExp();
     // add caught pokemon to visible list
     addToFullList();
     // check for empty all/remove arrays
@@ -225,11 +231,36 @@ function buildCaughtObjects() {
             shiny = 1;
         }
 
-        // add evolution bonus to base attack
+        // carry over gained lvl, atk, and exp through evolution
+        // pokemon is stage 2
         if (evolutionFlag == 2) {
+            // inherit previous stage gained experience
+            for (var i2 = 0; i2 < caught.length; i2++) {
+                if (caught[i2].line == caught[i].line && caught[i2].stage == 1) {
+                    base = base + caught[i2].basePlus;
+                    exp = exp + caught[i2].expPlus;
+                    level = level + caught[i2].levelPlus;
+                }
+            }
+            // add evolution bonus to base attack
             base = base + 3;
         }
+        // pokemon is stage 3
         else if (evolutionFlag == 3) {
+            // inherit previous stage gained experience
+            for (var i3 = 0; i3 < caught.length; i3++) {
+                if (caught[i3].line == caught[i].line && caught[i3].stage == 2) {
+                    base = base + caught[i3].basePlus;
+                    exp = exp + caught[i3].expPlus;
+                    level = level + caught[i3].levelPlus;
+                }
+                if (caught[i3].line == caught[i].line && caught[i3].stage == 1) {
+                    base = base + caught[i3].basePlus;
+                    exp = exp + caught[i3].expPlus;
+                    level = level + caught[i3].levelPlus;
+                }
+            }
+            // add evolution bonus to base attack
             base = base + 5;
         }
 
@@ -302,6 +333,21 @@ function evolutionCheck(pkmn) {
         return 0;
     }
 }
+
+// function addEvolutionExp() {
+//     // iterate through caught array
+//     for (i = 0; i < caught.length; i++) {
+//         // for every item in caught array, iterate through caughtObjects array
+//         for (i2 = 0; i < caughtObjects.length; i++) {
+//             // if caughtObject item 
+//             if (caughtObjects[i2].line == caught[i].line) {
+//                 if (caughtObjects[i2].name != caught[i].name) {
+
+//                 }
+//             }
+//         }
+//     }
+// }
 
 function addToFullList() {
     // depopulate full list
@@ -553,11 +599,13 @@ function checkLevel() {
     for (var i = 0; i < caught.length; i++) {
         let currentPkmn = caught[i];
         // Level < 10
-        if (currentPkmn.level < 10) {
+        if (currentPkmn.level < 15) {
             if (currentPkmn.exp >= 10) {
                 currentPkmn.exp -= 10;
                 currentPkmn.level++;
+                currentPkmn.levelPlus++;
                 currentPkmn.base++;
+                currentPkmn.basePlus++;
             }
         }
         // Level < 15
@@ -565,7 +613,9 @@ function checkLevel() {
             if (currentPkmn.exp >= 15) {
                 currentPkmn.exp -= 15;
                 currentPkmn.level++;
+                currentPkmn.levelPlus++;
                 currentPkmn.base++;
+                currentPkmn.basePlus++;
             }
         }
         // Level < 20
@@ -573,7 +623,9 @@ function checkLevel() {
             if (currentPkmn.exp >= 20) {
                 currentPkmn.exp -= 20;
                 currentPkmn.level++;
+                currentPkmn.levelPlus++;
                 currentPkmn.base++;
+                currentPkmn.basePlus++;
             }
         }
         // Level cap
