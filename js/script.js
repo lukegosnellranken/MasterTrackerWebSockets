@@ -1,10 +1,10 @@
 /*
 TO-DO
 --------------------------------------------------------------------------------------
+- Set atk bug
+- Complete documentation
 - Sort dropdown by pokedex number
-- Show bonuses (evolution and shiny)
 - Full websocket.io integration
-- Evolution experience carry-over
 - Multiple trainers lists
 --------------------------------------------------------------------------------------
 */
@@ -35,6 +35,9 @@ window.ask = function (msg) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// global variables
+let btnShowHideGlobalClass = "btnHide";
 
 // arrays
 const all = [];
@@ -359,12 +362,12 @@ function addToFullList() {
         // call experienceComponent function
         let liExp = experienceComponent(caughtObjects[i]);
         // call tradeComponent function
-        let liT = tradeComponent(caughtObjects[i]);
+        let liSetStats = setStatsComponent(caughtObjects[i]);
         
         // spriteAndStatsLiUl = liExp < ul < li
         ul.appendChild(liSS);
         ul.appendChild(liExp);
-        ul.appendChild(liT);
+        ul.appendChild(liSetStats);
         li.appendChild(ul);
         // add completed list item to fullList array
         fullList.appendChild(li);
@@ -490,7 +493,7 @@ function experienceComponent(co) {
     return returnedLi;
 }
 
-function tradeComponent(co) {
+function setStatsComponent(co) {
     // co = caughtObjects[i] from addToFullList()
     // create elements and set attributes
     let returnedLi = document.createElement("li");
@@ -501,7 +504,7 @@ function tradeComponent(co) {
     let btn1 = document.createElement("button");
     let btn2 = document.createElement("button");
     let btn3 = document.createElement("button");
-    returnedLi.setAttribute("class", "trade-li");
+    returnedLi.setAttribute("class", `setStats-li ${btnShowHideGlobalClass}`);
     li1.setAttribute("class", "setLvlBtn-li");
     li2.setAttribute("class", "setAtkBtn-li");
     li3.setAttribute("class", "setExpBtn-li");
@@ -517,8 +520,8 @@ function tradeComponent(co) {
     btn2.setAttribute("onclick", `setAtk("${co.name}")`);
     // when EXP button is clicked, run setExp function, passing in co.name
     btn3.setAttribute("onclick", `setExp("${co.name}")`);
-    ul.setAttribute("id", (co.name).toLowerCase() + "-trade-li-ul");
-    ul.setAttribute("class", "trade-li-ul");
+    ul.setAttribute("id", (co.name).toLowerCase() + "-setStats-li-ul");
+    ul.setAttribute("class", "setStats-li-ul");
     // ((inp < li1) = (btn < li2)) < ul < returnedLi
     li1.appendChild(btn1);
     li2.appendChild(btn2);
@@ -578,6 +581,7 @@ function setAtk(pkmn) {
     let input = document.getElementById(pkmn.toLowerCase() + "-input");
     // set amount to value of entered text in input
     let amount = input.value;
+    console.log(parseInt(amount));
     // iterate through all items in caught array to find the pokemon with the correct name value
     for (i = 0; i < caught.length; i++) {
         if (caught[i].name == pkmn) {
@@ -652,4 +656,25 @@ function checkLevel() {
             currentPkmn.level = 20;
         }
     }
+}
+
+function hideShowSetStats() {
+    let btnHideShowSetStats = document.getElementById('hideShowSetStats');
+
+    if (btnShowHideGlobalClass == "btnHide") {
+        btnShowHideGlobalClass = "btnShow";
+        btnHideShowSetStats.innerHTML = "Hide Set Stats";
+    }
+    else if (btnShowHideGlobalClass == "btnShow") {
+        btnShowHideGlobalClass = "btnHide";
+        btnHideShowSetStats.innerHTML = "Show Set Stats";
+    }
+
+    // rebuild caught object array for captured pokemon
+    buildCaughtObjects();
+    buildCaughtObjects();
+    // add caught pokemon to visible list
+    addToFullList();
+    // check for empty all/remove arrays
+    checkEmptyArray();
 }

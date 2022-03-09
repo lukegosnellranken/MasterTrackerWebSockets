@@ -34,6 +34,12 @@ body {
     margin-right: 1%;
 }
 
+.setStats {
+    display: flex;
+    justify-content: center;
+    padding-top: 2%;
+}
+
 .pkmnName {
     text-align: center;
     margin-top: 15%;
@@ -110,17 +116,17 @@ body {
     width: 30%;
 }
 
-.trade-li {
+.setStats-li {
     display: flex;
     justify-content: center;
 }
 
-.trade-li-ul {
+.setStats-li-ul {
     display: inline-flex;
     justify-content: center;
 }
 
-.trade-li-ul li {
+.setStats-li-ul li {
     display: inline-block;
     justify-content: center;
 }
@@ -129,6 +135,14 @@ body {
     font-size: 80%;
     margin-top: -6%;
     margin-bottom: 0%;
+}
+
+.btnShow {
+    display: flex;
+}
+
+.btnHide {
+    display: none;
 }
 
 
