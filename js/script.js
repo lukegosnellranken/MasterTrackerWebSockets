@@ -707,13 +707,17 @@ function addExp(pkmn) {
     let input = document.getElementById(pkmn.toLowerCase() + "-input");
     // set amount to value of entered text in input
     let amount = input.value;
-    // iterate through all items in caught array to find the pokemon with the correct name value
-    for (i = 0; i < caught.length; i++) {
-        if (caught[i].name == pkmn) {
-            // add amount to the pokemon's experience value
-            caught[i].exp += parseInt(amount);
+    // validate that amount is an integer
+    if (Number(amount).toString() !== "NaN") {
+        // iterate through all items in caught array to find the pokemon with the correct name value
+        for (i = 0; i < caught.length; i++) {
+            if (caught[i].name == pkmn) {
+                // add amount to the pokemon's experience value
+                caught[i].exp += parseInt(amount);
+            }
         }
     }
+    
     // check levels, rebuild caughtObjects, and repopulate full list
     checkLevel();
     buildCaughtObjects();
@@ -727,11 +731,14 @@ function setLvl(pkmn) {
     let input = document.getElementById(pkmn.toLowerCase() + "-input");
     // set amount to value of entered text in input
     let amount = input.value;
-    // iterate through all items in caught array to find the pokemon with the correct name value
-    for (i = 0; i < caught.length; i++) {
-        if (caught[i].name == pkmn) {
-            // set amount to the pokemon's level value
-            caught[i].level = parseInt(amount);
+    // validate that amount is an integer
+    if (Number(amount).toString() !== "NaN") {
+        // iterate through all items in caught array to find the pokemon with the correct name value
+        for (i = 0; i < caught.length; i++) {
+            if (caught[i].name == pkmn) {
+                // set amount to the pokemon's level value
+                caught[i].level = parseInt(amount);
+            }
         }
     }
     // check levels, rebuild caughtObjects, and repopulate full list
@@ -747,12 +754,14 @@ function setAtk(pkmn) {
     let input = document.getElementById(pkmn.toLowerCase() + "-input");
     // set amount to value of entered text in input
     let amount = input.value;
-    console.log(parseInt(amount));
-    // iterate through all items in caught array to find the pokemon with the correct name value
-    for (i = 0; i < caught.length; i++) {
-        if (caught[i].name == pkmn) {
-            // set amount to the pokemon's base value
-            caught[i].base = parseInt(amount);
+    // validate that amount is an integer
+    if (Number(amount).toString() !== "NaN") {
+        // iterate through all items in caught array to find the pokemon with the correct name value
+        for (i = 0; i < caught.length; i++) {
+            if (caught[i].name == pkmn) {
+                // set amount to the pokemon's base value
+                caught[i].base = parseInt(amount);
+            }
         }
     }
     // check levels, rebuild caughtObjects, and repopulate full list
@@ -768,11 +777,14 @@ function setExp(pkmn) {
     let input = document.getElementById(pkmn.toLowerCase() + "-input");
     // set amount to value of entered text in input
     let amount = input.value;
-    // iterate through all items in caught array to find the pokemon with the correct name value
-    for (i = 0; i < caught.length; i++) {
-        if (caught[i].name == pkmn) {
-            // set amount to the pokemon's exp value
-            caught[i].exp = parseInt(amount);
+    // validate that amount is an integer
+    if (Number(amount).toString() !== "NaN") {
+        // iterate through all items in caught array to find the pokemon with the correct name value
+        for (i = 0; i < caught.length; i++) {
+            if (caught[i].name == pkmn) {
+                // set amount to the pokemon's exp value
+                caught[i].exp = parseInt(amount);
+            }
         }
     }
     // check levels, rebuild caughtObjects, and repopulate full list
