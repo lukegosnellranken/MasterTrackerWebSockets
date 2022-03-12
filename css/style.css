@@ -154,6 +154,22 @@ body {
     white-space: nowrap;
 }
 
+.select2-selection__rendered {
+    font-size: 70%;
+}
+
+.ddCSS {
+    font-size: 70%;
+}
+
+.select2-container {
+    vertical-align: top;
+}
+
+.select2-selection {
+    width: 100% !important;
+}
+
 @media only screen and (max-width: 1350px) {
     #titleImage {
         width: 50%;
@@ -171,6 +187,34 @@ body {
 
     .subtitle {
         font-size: 70%;
+    }
+
+    .addPokemon span {
+        vertical-align: top !important;
+    }
+
+    .select2-selection, .select2-selection--single {
+        height: 1em !important;
+        vertical-align: top !important;
+    }
+
+    .select2-selection__arrow {
+        height: 1em !important;
+        vertical-align: top !important;
+    }
+
+    .select2-selection__rendered {
+        font-size: 50%;
+        margin-top: -.75em;
+    }
+
+    #select2-selectPokemon-container {
+        vertical-align: top !important;
+        width: 50%;
+    }
+    
+    .ddCSS {
+        font-size: 50%;
     }
 
     #fullList-ul {
