@@ -2,7 +2,7 @@
 TO-DO
 --------------------------------------------------------------------------------------
 - Aspect ratio of images
-- Set atk bug
+- Set atk bug - SAF still needs fix
 - Complete documentation
 - Sort dropdown by pokedex number
 - Searchable dropdown
@@ -369,7 +369,7 @@ function removePokemon() {
     checkEmptyArray();
 }
 
-function buildCaughtObjects() {
+function buildCaughtObjects(saf) {
     // depopulate caughtObjects array
     caughtObjects.splice(0, caughtObjects.length);
 
@@ -399,14 +399,17 @@ function buildCaughtObjects() {
         if (evolutionFlag == 2) {
             // inherit previous stage gained experience
             for (var i2 = 0; i2 < caught.length; i2++) {
-                if (caught[i2].line == caught[i].line && caught[i2].stage == 1) {
+                if (caught[i2].line == caught[i].line && caught[i2].stage == 1) { 
                     base = base + caught[i2].basePlus;
                     exp = exp + caught[i2].expPlus;
                     level = level + caught[i2].levelPlus;
                 }
             }
             // add evolution bonus to base attack
-            base = base + 3;
+            if (!saf) {
+                base = base + 3;
+            }
+            
             // update evolve value
             evolve = 1;
         }
@@ -426,7 +429,9 @@ function buildCaughtObjects() {
                 }
             }
             // add evolution bonus to base attack
-            base = base + 5;
+            if (!saf) {
+                base = base + 5;
+            }
             // update evolve value
             evolve = 2;
         }
@@ -749,6 +754,7 @@ function setLvl(pkmn) {
 }
 
 function setAtk(pkmn) {
+    let setAtkFlag = true;
     // pkmn = p.name from experience()
     // create text input for caught pokemon
     let input = document.getElementById(pkmn.toLowerCase() + "-input");
@@ -761,13 +767,14 @@ function setAtk(pkmn) {
             if (caught[i].name == pkmn) {
                 // set amount to the pokemon's base value
                 caught[i].base = parseInt(amount);
+                console.log(caught[i].base);
             }
         }
     }
     // check levels, rebuild caughtObjects, and repopulate full list
     checkLevel();
-    buildCaughtObjects();
-    buildCaughtObjects();
+    buildCaughtObjects(setAtkFlag);
+    buildCaughtObjects(setAtkFlag);
     addToFullList();
 }
 
