@@ -1,5 +1,5 @@
 html {
-    height: 100%;
+    min-height: 100% !important;
 }
 
 body {
@@ -62,6 +62,7 @@ body {
     list-style-type: none;
     padding: 0;
     width: 100%;
+    max-width: 70%;
     display: inline-flex;
     justify-content: center;
     align-items: baseline;
@@ -145,10 +146,94 @@ body {
     display: none;
 }
 
+.li-stats p {
+    white-space: nowrap;
+}
+
+.li-bonus p {
+    white-space: nowrap;
+}
+
+@media only screen and (max-width: 1350px) {
+    #titleImage {
+        width: 50%;
+    }
+
+    #fullList-ul {
+        max-width: 100%;
+    }
+}
 
 @media only screen and (max-width: 800px) {
     #titleImage {
         width: 50%;
+    }
+
+    .subtitle {
+        font-size: 70%;
+    }
+
+    #fullList-ul {
+        max-width: 100%;
+    }
+
+    .li-stats p {
+        font-size: 50%;
+        font-weight: bold;
+    }
+
+    .li-bonus p {
+        font-size: 50%;
+        font-weight: bold;
+    }
+
+    .addExpBtn {
+        font-size: 50%;
+        vertical-align: top;
+    }
+
+    .addPokemon select {
+        vertical-align: top;
+        font-size: 50%;
+    }
+
+    .removePokemon select {
+        vertical-align: top;
+        font-size: 50%;
+    }
+
+    .addPokemon button {
+        font-size: 50%;
+        vertical-align: top;
+    }
+
+    .removePokemon button {
+        font-size: 50%;
+        vertical-align: top;
+    }
+
+    .inputElement {
+        vertical-align: top;
+    }
+
+    .input-li {
+        height: 1em;
+        vertical-align: top;
+    }
+
+    .addExpBtn-li {
+        height: 1em;
+        vertical-align: top;
+    }
+
+    .setLvlBtn, .setAtkBtn, .setExpBtn {
+        font-size: 50%;
+        vertical-align: top;
+    }
+
+    #hideShowSetStats {
+        font-size: 50%;
+        vertical-align: top;
     }
 }
 
@@ -156,10 +241,32 @@ body {
     #titleImage {
         width: 60%;
     }
+    
+}
+
+@media only screen and (max-width: 500px) {
+
+    .list-pokemon-li {
+        max-width: 33%;
+    }
+
+    .sprite {
+        max-width: 50%;
+    }
+
 }
 
 @media only screen and (max-width: 375px) {
     #titleImage {
         width: 70%;
     }
+
+    .list-pokemon-li {
+        max-width: 30%;
+    }
+
+    .sprite {
+        width: 100%;
+    }
+
 }

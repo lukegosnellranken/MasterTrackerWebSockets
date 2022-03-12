@@ -1,9 +1,11 @@
 /*
 TO-DO
 --------------------------------------------------------------------------------------
+- Aspect ratio of images
 - Set atk bug
 - Complete documentation
 - Sort dropdown by pokedex number
+- Searchable dropdown
 - Full websocket.io integration
 - Multiple trainers lists
 - Eevee evolution check
@@ -168,7 +170,7 @@ let rhyhorn = {name:"Rhyhorn", pokedex:111, type1:"ground", type2:"rock", level:
 let rhydon = {name:"Rhydon", pokedex:112, type1:"ground", type2:"rock", level:6, levelPlus:0, base:7, basePlus:0, exp:6, expPlus:0, stage:2, line:"rhyhorn", evolve:0, shiny:0, player: 0, remove: 0};
 let chansey = {name:"Chansey", pokedex:113, type1:"normal", type2:"none", level:4, levelPlus:0, base:5, basePlus:0, exp:4, expPlus:0, stage:1, line:"chansey", evolve:0, shiny:0, player: 0, remove: 0};
 let tangela = {name:"Tangela", pokedex:114, type1:"grass", type2:"none", level:4, levelPlus:0, base:5, basePlus:0, exp:4, expPlus:0, stage:1, line:"tangela", evolve:0, shiny:0, player: 0, remove: 0};
-let kangaskhan = {name:"Kangaskahn", pokedex:115, type1:"normal", type2:"none", level:4, levelPlus:0, base:5, basePlus:0, exp:4, expPlus:0, stage:1, line:"kangaskahn", evolve:0, shiny:0, player: 0, remove: 0};
+let kangaskhan = {name:"Kangaskhan", pokedex:115, type1:"normal", type2:"none", level:4, levelPlus:0, base:5, basePlus:0, exp:4, expPlus:0, stage:1, line:"kangaskhan", evolve:0, shiny:0, player: 0, remove: 0};
 let horsea = {name:"Horsea", pokedex:116, type1:"water", type2:"none", level:4, levelPlus:0, base:5, basePlus:0, exp:4, expPlus:0, stage:1, line:"horsea", evolve:0, shiny:0, player: 0, remove: 0};
 let seadra = {name:"Seadra", pokedex:117, type1:"water", type2:"none", level:6, levelPlus:0, base:7, basePlus:0, exp:6, expPlus:0, stage:2, line:"horsea", evolve:0, shiny:0, player: 0, remove: 0};
 let goldeen = {name:"Goldeen", pokedex:118, type1:"water", type2:"none", level:4, levelPlus:0, base:5, basePlus:0, exp:4, expPlus:0, stage:1, line:"goldeen", evolve:0, shiny:0, player: 0, remove: 0};
@@ -178,7 +180,7 @@ let starmie = {name:"Starmie", pokedex:121, type1:"water", type2:"psychic", leve
 let mrmime = {name:"Mr-Mime", pokedex:122, type1:"psychic", type2:"none", level:4, levelPlus:0, base:5, basePlus:0, exp:4, expPlus:0, stage:1, line:"mrmime", evolve:0, shiny:0, player: 0, remove: 0};
 let scyther = {name:"Scyther", pokedex:123, type1:"bug", type2:"flying", level:4, levelPlus:0, base:5, basePlus:0, exp:4, expPlus:0, stage:1, line:"scyther", evolve:0, shiny:0, player: 0, remove: 0};
 let jynx = {name:"Jynx", pokedex:124, type1:"ice", type2:"psychic", level:4, levelPlus:0, base:5, basePlus:0, exp:4, expPlus:0, stage:1, line:"jynx", evolve:0, shiny:0, player: 0, remove: 0};
-let electabuzz = {name:"Kangaskahn", pokedex:125, type1:"normal", type2:"none", level:4, levelPlus:0, base:5, basePlus:0, exp:4, expPlus:0, stage:1, line:"electabuzz", evolve:0, shiny:0, player: 0, remove: 0};
+let electabuzz = {name:"Electabuzz", pokedex:125, type1:"normal", type2:"none", level:4, levelPlus:0, base:5, basePlus:0, exp:4, expPlus:0, stage:1, line:"electabuzz", evolve:0, shiny:0, player: 0, remove: 0};
 let magmar = {name:"Magmar", pokedex:126, type1:"fire", type2:"none", level:4, levelPlus:0, base:5, basePlus:0, exp:4, expPlus:0, stage:1, line:"magmar", evolve:0, shiny:0, player: 0, remove: 0};
 let pinsir = {name:"Pinsir", pokedex:127, type1:"bug", type2:"none", level:4, levelPlus:0, base:5, basePlus:0, exp:4, expPlus:0, stage:1, line:"pinsir", evolve:0, shiny:0, player: 0, remove: 0};
 let tauros = {name:"Tauros", pokedex:128, type1:"normal", type2:"none", level:4, levelPlus:0, base:5, basePlus:0, exp:4, expPlus:0, stage:1, line:"tauros", evolve:0, shiny:0, player: 0, remove: 0};
@@ -194,7 +196,7 @@ let porygon = {name:"Porygon", pokedex:137, type1:"normal", type2:"none", level:
 let omanyte = {name:"Omanyte", pokedex:138, type1:"rock", type2:"water", level:4, levelPlus:0, base:5, basePlus:0, exp:4, expPlus:0, stage:1, line:"omanyte", evolve:0, shiny:0, player: 0, remove: 0};
 let omastar = {name:"Omastar", pokedex:139, type1:"rock", type2:"water", level:4, levelPlus:0, base:5, basePlus:0, exp:4, expPlus:0, stage:2, line:"omanyte", evolve:0, shiny:0, player: 0, remove: 0};
 let kabuto = {name:"Kabuto", pokedex:140, type1:"rock", type2:"water", level:4, levelPlus:0, base:5, basePlus:0, exp:4, expPlus:0, stage:1, line:"kabuto", evolve:0, shiny:0, player: 0, remove: 0};
-let kabutops = {name:"Kubutops", pokedex:141, type1:"rock", type2:"water", level:4, levelPlus:0, base:5, basePlus:0, exp:4, expPlus:0, stage:2, line:"kabuto", evolve:0, shiny:0, player: 0, remove: 0};
+let kabutops = {name:"Kabutops", pokedex:141, type1:"rock", type2:"water", level:4, levelPlus:0, base:5, basePlus:0, exp:4, expPlus:0, stage:2, line:"kabuto", evolve:0, shiny:0, player: 0, remove: 0};
 let aerodactyl = {name:"Aerodactyl", pokedex:142, type1:"rock", type2:"flying", level:4, levelPlus:0, base:5, basePlus:0, exp:4, expPlus:0, stage:1, line:"lapras", evolve:0, shiny:0, player: 0, remove: 0};
 let snorlax = {name:"Snorlax", pokedex:143, type1:"normal", type2:"none", level:4, levelPlus:0, base:5, basePlus:0, exp:4, expPlus:0, stage:1, line:"snorlax", evolve:0, shiny:0, player: 0, remove: 0};
 let articuno = {name:"Articuno", pokedex:144, type1:"ice", type2:"flying", level:4, levelPlus:0, base:5, basePlus:0, exp:4, expPlus:0, stage:1, line:"articuno", evolve:0, shiny:0, player: 0, remove: 0};
@@ -427,7 +429,7 @@ function buildCaughtObjects() {
 
         obj.name = name;
         obj.sprite = "https://img.pokemondb.net/sprites/black-white/anim/normal/" + caught[i].name.toLowerCase() + ".gif";
-        obj.stats =  " Lvl: " + level + " Atk: " + base + " Exp: " + exp;
+        obj.stats =  "Lvl: " + level + " Atk: " + base + " Exp: " + exp;
         obj.evolve = evolve;
         obj.shiny = shiny;
         // push built object to caughtObjects array if the evolutionRemove array does not contain the current pokemon
@@ -559,6 +561,10 @@ function spriteStatComponent(co) {
     let liSprite = document.createElement("li");
     let liStats = document.createElement("li");
     let liBonus = document.createElement("li");
+
+    //set liStats attributes
+    liStats.setAttribute("class", "li-stats");
+    liStats.setAttribute("id", co.name.toLowerCase() + "-li-stats");
 
     //set liBonus attributes
     liBonus.setAttribute("class", "li-bonus");
