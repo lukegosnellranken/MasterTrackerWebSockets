@@ -1,11 +1,12 @@
 /*
 TO-DO
 --------------------------------------------------------------------------------------
+- BaseSet logic - Bulbasaur line used for testing - Atk raises Lvl, Lvl does not raise Atk
+- Decouple evolutionCheck from BuildCaughtObjects
 - Aspect ratio of images
 - Set atk bug - SAF still needs fix
 - Complete documentation
 - Sort dropdown by pokedex number
-- Searchable dropdown
 - Full websocket.io integration
 - Multiple trainers lists
 - Eevee evolution check
@@ -60,9 +61,9 @@ const selectPokemonSubBtn = document.getElementById("sub");
 const fullList = document.getElementById("fullList-ul");
 
 // pokemon with initial values
-let bulbasaur = {name:"Bulbasaur", pokedex:1, type1:"grass", type2:"poison", level:4, levelPlus:0, base:4, basePlus:0, exp:0, expPlus:0, stage:1, line:"bulbasaur", evolve:0, shiny:0, player: 0, remove: 0};
-let ivysaur = {name:"Ivysaur", pokedex:2, type1:"grass", type2:"poison", level:7, levelPlus:0, base:7, basePlus:0, exp:0, expPlus:0, stage:2, line:"bulbasaur", evolve:0, shiny:0, player: 0, remove: 0};
-let venusaur = {name:"Venusaur", pokedex:3, type1:"grass", type2:"poison", level:7, levelPlus:0, base:8, basePlus:0, exp:0, expPlus:0, stage:3, line:"bulbasaur", evolve:0, shiny:0, player: 0, remove: 0};
+let bulbasaur = {name:"Bulbasaur", pokedex:1, type1:"grass", type2:"poison", level:4, levelPlus:0, base:4, basePlus:0, exp:0, expPlus:0, stage:1, line:"bulbasaur", evolve:0, shiny:0, player: 0, remove: 0, baseSet:0, baseSetPlus:0, levelSet: 0, levelSetPlus:0};
+let ivysaur = {name:"Ivysaur", pokedex:2, type1:"grass", type2:"poison", level:7, levelPlus:0, base:7, basePlus:0, exp:0, expPlus:0, stage:2, line:"bulbasaur", evolve:0, shiny:0, player: 0, remove: 0, baseSet:0, baseSetPlus:0, levelSet: 0, levelSetPlus:0};
+let venusaur = {name:"Venusaur", pokedex:3, type1:"grass", type2:"poison", level:7, levelPlus:0, base:8, basePlus:0, exp:0, expPlus:0, stage:3, line:"bulbasaur", evolve:0, shiny:0, player: 0, remove: 0, baseSet:0, baseSetPlus:0, levelSet: 0, levelSetPlus:0};
 let squirtle = {name:"Squirtle", pokedex:4, type1:"water", type2:"none", level:5, levelPlus:0, base:4, basePlus:0, exp:0, expPlus:0, stage:1, line:"squirtle", evolve:0, shiny:0, player: 0, remove: 0};
 let wartortle = {name:"Wartortle", pokedex:5, type1:"water", type2:"none", level:7, levelPlus:0, base:7, basePlus:0, exp:0, expPlus:0, stage:2, line:"squirtle", evolve:0, shiny:0, player: 0, remove: 0};
 let blastoise = {name:"Blastoise", pokedex:6, type1:"water", type2:"none", level:7, levelPlus:0, base:8, basePlus:0, exp:0, expPlus:0, stage:3, line:"squirtle", evolve:0, shiny:0, player: 0, remove: 0};
@@ -315,7 +316,9 @@ function addPokemon() {
     // repopulate dropdown
     populateDropdown();
     // rebuild caught object array for captured pokemon
-    buildCaughtObjects();
+    evolutionCheck();
+    shinyCheck();
+    checkLevel();
     buildCaughtObjects();
     // add caught pokemon to visible list
     addToFullList();
@@ -361,7 +364,9 @@ function removePokemon() {
     // repopulate dropdown
     populateDropdown();
     // rebuild caught object array for captured pokemon
-    buildCaughtObjects();
+    evolutionCheck();
+    shinyCheck();
+    checkLevel();
     buildCaughtObjects();
     // add caught pokemon to visible list
     addToFullList();
@@ -369,16 +374,16 @@ function removePokemon() {
     checkEmptyArray();
 }
 
-function buildCaughtObjects(saf) {
+function buildCaughtObjects() {
     // depopulate caughtObjects array
     caughtObjects.splice(0, caughtObjects.length);
 
     // repopulate caughtObjects array
     for (var i = 0; i < caught.length; i++) {
         // shiny check
-        let shinyFlag = shinyCheck(caught[i]);
+        //let shinyFlag = shinyCheck(caught[i]);
         // evolution check
-        let evolutionFlag = evolutionCheck(caught[i]);
+        //let evolutionFlag = evolutionCheck(caught[i]);
         // build object for every caught pokemon
         let obj = {};
         let name = caught[i].name;
@@ -387,55 +392,136 @@ function buildCaughtObjects(saf) {
         let exp = caught[i].exp;
         let shiny = caught[i].shiny;
         let evolve = caught[i].evolve;
+        let stage = caught[i].stage;
+        let baseSet = caught[i].baseSet;
+        let baseSetPlus = caught[i].baseSetPlus;
+        let levelSet = caught[i].levelSet;
+        let levelSetPlus = caught[i].levelSetPlus;
 
-        // update shiny value
-        if (shinyFlag == 1) {
-            shiny = 1;
-            base = base + 3;
-        }
+        // // update shiny value
+        // if (shinyFlag == 1) {
+        //     shiny = 1;
+        //     base = base + 3;
+        // }
 
-        // carry over gained lvl, atk, and exp through evolution
-        // pokemon is stage 2
-        if (evolutionFlag == 2) {
-            // inherit previous stage gained experience
-            for (var i2 = 0; i2 < caught.length; i2++) {
-                if (caught[i2].line == caught[i].line && caught[i2].stage == 1) { 
-                    base = base + caught[i2].basePlus;
-                    exp = exp + caught[i2].expPlus;
-                    level = level + caught[i2].levelPlus;
-                }
-            }
-            // add evolution bonus to base attack
-            if (!saf) {
-                base = base + 3;
-            }
+        // // carry over gained lvl, atk, and exp through evolution
+        // // pokemon is stage 1
+        // if (evolutionFlag == 1) {
+        //     // raise pokemon's level along with base increases
+        //     level = level + baseSetPlus;
+        // }
+        // // pokemon is stage 2
+        // if (evolutionFlag == 2) {
+        //     // if setAtkFlag is passed in from setAtk function
+        //     if (flag == "atk") {
+        //         caught[i].baseSet = 2;
+        //     }
+        //     // if setLvlFlag is passed in from setLvl function
+        //     if (flag == "lvl") {
+        //         caught[i].levelSet = 2;
+        //         base = base + levelSetPlus;
+        //     }
+        //     // inherit previous stage gained experience
+        //     for (var i2 = 0; i2 < caught.length; i2++) {
+        //         if (caught[i2].line == caught[i].line && caught[i2].stage == 1) { 
+        //             base = base + caught[i2].basePlus;
+        //             exp = exp + caught[i2].expPlus;
+        //             level = level + caught[i2].levelPlus;
+        //             baseSetPlus = baseSetPlus + caught[i2].baseSetPlus;
+        //         }
+        //     }
+        //     // add evolution bonus and previously added base adjustments to base attack if attack was not set manually
+        //     if (baseSet !== 2) {
+        //         base = base + 3;
+        //         base = base + baseSetPlus;
+        //         level = level + baseSetPlus;
+        //     }
             
-            // update evolve value
-            evolve = 1;
+        //     // update evolve value
+        //     evolve = 1;
+        // }
+        // // pokemon is stage 3
+        // else if (evolutionFlag == 3) {
+        //     // if setAtkFlag is passed in from setAtk function
+        //     if (flag == "atk") {
+        //         caught[i].baseSet = 3;
+        //     }
+        //     // inherit previous stage gained experience
+        //     for (var i3 = 0; i3 < caught.length; i3++) {
+        //         if (caught[i3].line == caught[i].line && caught[i3].stage == 2) {
+        //             base = base + caught[i3].basePlus;
+        //             exp = exp + caught[i3].expPlus;
+        //             level = level + caught[i3].levelPlus;
+        //             baseSetPlus = baseSetPlus + caught[i3].baseSetPlus;
+        //         }
+        //         if (caught[i3].line == caught[i].line && caught[i3].stage == 1) {
+        //             base = base + caught[i3].basePlus;
+        //             exp = exp + caught[i3].expPlus;
+        //             level = level + caught[i3].levelPlus;
+        //             baseSetPlus = baseSetPlus + caught[i3].baseSetPlus;
+        //         }
+        //     }
+        //     // add evolution bonus and previously added base adjustments to base attack if attack was not set manually
+        //     if (baseSet !== 3) {
+        //         base = base + 5;
+        //         base = base + baseSetPlus;
+        //         level = level + baseSetPlus;
+        //     }
+        //     // update evolve value
+        //     evolve = 2;
+        // }
+
+        // Add to base if pokemon is evolved
+        if (evolve == 2) {
+            base += 5;
         }
-        // pokemon is stage 3
-        else if (evolutionFlag == 3) {
-            // inherit previous stage gained experience
-            for (var i3 = 0; i3 < caught.length; i3++) {
-                if (caught[i3].line == caught[i].line && caught[i3].stage == 2) {
-                    base = base + caught[i3].basePlus;
-                    exp = exp + caught[i3].expPlus;
-                    level = level + caught[i3].levelPlus;
-                }
-                if (caught[i3].line == caught[i].line && caught[i3].stage == 1) {
-                    base = base + caught[i3].basePlus;
-                    exp = exp + caught[i3].expPlus;
-                    level = level + caught[i3].levelPlus;
-                }
-            }
-            // add evolution bonus to base attack
-            if (!saf) {
-                base = base + 5;
-            }
-            // update evolve value
-            evolve = 2;
+        else if (evolve == 1) {
+            base += 3;
         }
 
+        // Add to base if pokemon is shiny
+        if (shiny == 1) {
+            base += 3;
+        }
+
+        // inherit previous stage gained experience
+        // pokemon is stage 3
+        if (stage == 3) {
+            for (var e3 = 0; e3 < caught.length; e3++) {
+                // inherit stage 2 pokemon experience
+                if (caught[e3].line == caught[i].line && caught[e3].stage == 2) {
+                    base = base + caught[e3].basePlus;
+                    exp = exp + caught[e3].expPlus;
+                    level = level + caught[e3].levelPlus;
+                    //baseSetPlus = baseSetPlus + caught[e3].baseSetPlus;
+                }
+                // inherit stage 1 pokemon experience
+                if (caught[e3].line == caught[i].line && caught[e3].stage == 1) {
+                    base = base + caught[e3].basePlus;
+                    exp = exp + caught[e3].expPlus;
+                    level = level + caught[e3].levelPlus;
+                    //baseSetPlus = baseSetPlus + caught[e3].baseSetPlus;
+                }
+            }
+        }
+        // pokemon is stage 2
+        if (stage == 2) {
+            for (var e2 = 0; e2 < caught.length; e2++) {
+                // inherit stage 1 pokemon experience
+                if (caught[e2].line == caught[i].line && caught[e2].stage == 1) { 
+                    base = base + caught[e2].basePlus;
+                    exp = exp + caught[e2].expPlus;
+                    level = level + caught[e2].levelPlus;
+                }
+            }
+        }
+
+        // CheckLevel for local object here???
+        // expPlus should remain consistent on global object
+        // inherited exp should update lvl and atk locally. Not globally.
+        // need new function for checking level locally after global check?
+
+        // build object
         obj.name = name;
         obj.sprite = "https://img.pokemondb.net/sprites/black-white/anim/normal/" + caught[i].name.toLowerCase() + ".gif";
         obj.stats =  "Lvl: " + level + " Atk: " + base + " Exp: " + exp;
@@ -449,61 +535,138 @@ function buildCaughtObjects(saf) {
     }
 }
 
-function shinyCheck(pkmn) {
+function shinyCheck() {
     for (var i = 0; i < caught.length; i++) {
-        if (caught[i].line == pkmn.line) {
-            if (caught[i].shiny == 1) {
-                return 1;
+        if (caught[i].shiny == 1) {
+            for (let i2 = 0; i2 < caught.length; i2++) {
+                if (caught[i2].line == caught[i].line) {
+                    caught[i2].shiny = 1;
+                }
             }
         }
     }
 }
 
-function evolutionCheck(pkmn) {
-    // first check for stage 3 pokemon, then stage 2, etc.
-    let lineAmount = 0;
-    if (pkmn.stage == 3) {
-        for (i = 0; i < caught.length; i++) {
-            if (caught[i].line == pkmn.line) {
-                lineAmount++;
-            }
-        }
-        if (lineAmount == 3) {
-            // remove other pokemon in line from caught array
-            for (var i = 0; i < caught.length; i++) {
-                if (caught[i].line == pkmn.line && caught[i].stage != 3) {
-                    // if pokemon does not yet exist in evolutionRemove array, add it
-                    console.log("evolutionRemove: " + caught[i].name);
-                    if (evolutionRemove.includes(caught[i]) === false) {
-                        evolutionRemove.push(caught[i]);
-                    }
+function evolutionCheck() {
+    // check for evolution and for lack of evolution
+    for (let i = 0; i < caught.length; i++) {
+        // Instantiate variables
+        let level = caught[i].level;
+        let base = caught[i].base;
+        let exp = caught[i].exp;
+        let lineCount = 0;
+
+        // add to line count for unbroken evolution lines
+        for (let lc = 0; lc < caught.length; lc++) {
+            // if pokemon is stage 1 or 2
+            if (caught[i].stage == 1 || caught[i].stage == 2) {
+                if (caught[lc].line == caught[i].line && caught[lc].stage <= caught[i].stage) {
+                    lineCount++;
                 }
             }
-            return 3;
+            // if pokemon is stage 3
+            if (caught[i].stage == 3) {
+                if ((caught.filter(function(e) { return e.stage == 1 && e.line == caught[i].line; }).length == 1) 
+                && (caught.filter(function(e) { return e.stage == 2 && e.line == caught[i].line; }).length == 1) 
+                && caught[lc].line == caught[i].line 
+                && caught[lc].stage <= caught[i].stage) {
+                    lineCount++;
+                }
+            }
         }
-    }
-    else if (pkmn.stage == 2) {
-        for (i = 0; i < caught.length; i++) {
-            if (caught[i].line == pkmn.line) {
-                if (caught[i].stage == 1) {
-                    // remove other pokemon in line from caught array
-                    if (caught[i].line == pkmn.line && (caught[i].stage != 2 || caught[i].stage != 3)) {
+
+        // assign evolve based on lineCount
+        if (lineCount == 3) {
+            caught[i].evolve = 2;
+        }
+        else if (lineCount == 2) {
+            caught[i].evolve = 1;
+        } else {
+            caught[i].evolve = 0;
+        }
+
+        // first check for stage 3 pokemon, then stage 2, etc.
+        let lineAmount = 0;
+        if (caught[i].stage == 3) {
+            for (let i2 = 0; i2 < caught.length; i2++) {
+                if (caught[i2].line == caught[i].line) {
+                    lineAmount++;
+                }
+            }
+            if (lineAmount == 3) {
+                // remove other pokemon in line from caught array
+                for (let i3 = 0; i3 < caught.length; i3++) {
+                    if (caught[i3].line == caught[i].line && caught[i3].stage != 3) {
                         // if pokemon does not yet exist in evolutionRemove array, add it
-                        console.log("evolutionRemove: " + caught[i].name);
-                        if (evolutionRemove.includes(caught[i]) === false) {
-                            evolutionRemove.push(caught[i]);
+                        console.log("evolutionRemove: " + caught[i3].name);
+                        if (evolutionRemove.includes(caught[i3]) === false) {
+                            evolutionRemove.push(caught[i3]);
                         }
                     }
-                    return 2;
                 }
+                
+                // // pokemon is stage 3
+                // // inherit previous stage gained experience
+                // for (var e3 = 0; e3 < caught.length; e3++) {
+                //     if (caught[e3].line == caught[i].line && caught[e3].stage == 2) {
+                //         base = base + caught[e3].basePlus;
+                //         exp = exp + caught[e3].expPlus;
+                //         level = level + caught[e3].levelPlus;
+                //         //baseSetPlus = baseSetPlus + caught[e3].baseSetPlus;
+                //     }
+                //     if (caught[e3].line == caught[i].line && caught[e3].stage == 1) {
+                //         base = base + caught[e3].basePlus;
+                //         exp = exp + caught[e3].expPlus;
+                //         level = level + caught[e3].levelPlus;
+                //         //baseSetPlus = baseSetPlus + caught[e3].baseSetPlus;
+                //     }
+                // }
+
+                // add evolution bonus and previously added base adjustments to base attack if attack was not set manually
+                //caught[i].base += 5;
+                //console.log("BASE: " + base);
+                // update evolve value
+                //caught[i].evolve = 2;
+            
             }
         }
-    }
-    else if (pkmn.stage == 1) {
-        return 1;
-    }
-    else {
-        return 0;
+        else if (caught[i].stage == 2) {
+            for (let i4 = 0; i4 < caught.length; i4++) {
+                if (caught[i4].line == caught[i].line) {
+                    if (caught[i4].stage == 1) {
+                        // remove other pokemon in line from caught array
+                        if (caught[i4].line == caught[i].line && (caught[i4].stage != 2 || caught[i4].stage != 3)) {
+                            // if pokemon does not yet exist in evolutionRemove array, add it
+                            console.log("evolutionRemove: " + caught[i4].name);
+                            if (evolutionRemove.includes(caught[i4]) === false) {
+                                evolutionRemove.push(caught[i4]);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // // pokemon is stage 2
+            // // inherit previous stage gained experience
+            // for (var e2 = 0; e2 < caught.length; e2++) {
+            //     if (caught[e2].line == caught[i].line && caught[e2].stage == 1) { 
+            //         caught[i].base = base + caught[e2].basePlus;
+            //         caught[i].exp = exp + caught[e2].expPlus;
+            //         caught[i].level = level + caught[e2].levelPlus;
+            //     }
+            // }
+
+            // add evolution bonus and previously added base adjustments to base attack if attack was not set manually
+            //caught[i].base += 3;
+            //console.log(name + " BASE: " + base);
+            // update evolve value
+            //caught[i].evolve = 1;
+
+        }
+        else if (caught[i].stage == 1) {
+            // pokemon is stage 1
+            //caught[i].evolve = 0;
+        }
     }
 }
 
@@ -719,18 +882,21 @@ function addExp(pkmn) {
             if (caught[i].name == pkmn) {
                 // add amount to the pokemon's experience value
                 caught[i].exp += parseInt(amount);
+                caught[i].expPlus += parseInt(amount);
             }
         }
     }
     
     // check levels, rebuild caughtObjects, and repopulate full list
     checkLevel();
-    buildCaughtObjects();
+    evolutionCheck();
+    shinyCheck();
     buildCaughtObjects();
     addToFullList();
 }
 
 function setLvl(pkmn) {
+    let setLvlFlag = "lvl";
     // pkmn = p.name from experience()
     // create text input for caught pokemon
     let input = document.getElementById(pkmn.toLowerCase() + "-input");
@@ -741,6 +907,8 @@ function setLvl(pkmn) {
         // iterate through all items in caught array to find the pokemon with the correct name value
         for (i = 0; i < caught.length; i++) {
             if (caught[i].name == pkmn) {
+                // set pokemon's baseLevelPlus value to amount - base
+                caught[i].baseLevelPlus = parseInt(amount) - caught[i].level;
                 // set amount to the pokemon's level value
                 caught[i].level = parseInt(amount);
             }
@@ -748,13 +916,13 @@ function setLvl(pkmn) {
     }
     // check levels, rebuild caughtObjects, and repopulate full list
     checkLevel();
-    buildCaughtObjects();
-    buildCaughtObjects();
+    buildCaughtObjects(setLvlFlag);
+    buildCaughtObjects(setLvlFlag);
     addToFullList();
 }
 
 function setAtk(pkmn) {
-    let setAtkFlag = true;
+    let setAtkFlag = "atk";
     // pkmn = p.name from experience()
     // create text input for caught pokemon
     let input = document.getElementById(pkmn.toLowerCase() + "-input");
@@ -765,13 +933,14 @@ function setAtk(pkmn) {
         // iterate through all items in caught array to find the pokemon with the correct name value
         for (i = 0; i < caught.length; i++) {
             if (caught[i].name == pkmn) {
-                // set amount to the pokemon's base value
+                // set pokemon's baseSetPlus value to amount - base
+                caught[i].baseSetPlus = parseInt(amount) - caught[i].base;
+                // set pokemon's base value to amount
                 caught[i].base = parseInt(amount);
-                console.log(caught[i].base);
             }
         }
     }
-    // check levels, rebuild caughtObjects, and repopulate full list
+    // check levels, rebuild caughtObjects (pass setAtkFlag), and repopulate full list
     checkLevel();
     buildCaughtObjects(setAtkFlag);
     buildCaughtObjects(setAtkFlag);
@@ -796,7 +965,8 @@ function setExp(pkmn) {
     }
     // check levels, rebuild caughtObjects, and repopulate full list
     checkLevel();
-    buildCaughtObjects();
+    evolutionCheck();
+    shinyCheck();
     buildCaughtObjects();
     addToFullList();
 }
@@ -813,6 +983,9 @@ function checkLevel() {
                 currentPkmn.levelPlus++;
                 currentPkmn.base++;
                 currentPkmn.basePlus++;
+            }
+            if (currentPkmn.expPlus >= 10) {
+                currentPkmn.expPlus -= 10;
             }
         }
         // Level < 15
