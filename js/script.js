@@ -61,9 +61,9 @@ const selectPokemonSubBtn = document.getElementById("sub");
 const fullList = document.getElementById("fullList-ul");
 
 // pokemon with initial values
-let bulbasaur = {name:"Bulbasaur", pokedex:1, type1:"grass", type2:"poison", level:4, levelPlus:0, base:4, basePlus:0, exp:0, expPlus:0, stage:1, line:"bulbasaur", evolve:0, shiny:0, player: 0, remove: 0, baseSet:0, baseSetPlus:0, levelSet: 0, levelSetPlus:0};
-let ivysaur = {name:"Ivysaur", pokedex:2, type1:"grass", type2:"poison", level:7, levelPlus:0, base:7, basePlus:0, exp:0, expPlus:0, stage:2, line:"bulbasaur", evolve:0, shiny:0, player: 0, remove: 0, baseSet:0, baseSetPlus:0, levelSet: 0, levelSetPlus:0};
-let venusaur = {name:"Venusaur", pokedex:3, type1:"grass", type2:"poison", level:7, levelPlus:0, base:8, basePlus:0, exp:0, expPlus:0, stage:3, line:"bulbasaur", evolve:0, shiny:0, player: 0, remove: 0, baseSet:0, baseSetPlus:0, levelSet: 0, levelSetPlus:0};
+let bulbasaur = {name:"Bulbasaur", pokedex:1, type1:"grass", type2:"poison", level:4, levelPlus:0, base:4, basePlus:0, exp:0, expPlus:0, stage:1, line:"bulbasaur", evolve:0, shiny:0, player: 0, remove: 0};
+let ivysaur = {name:"Ivysaur", pokedex:2, type1:"grass", type2:"poison", level:7, levelPlus:0, base:7, basePlus:0, exp:0, expPlus:0, stage:2, line:"bulbasaur", evolve:0, shiny:0, player: 0, remove: 0};
+let venusaur = {name:"Venusaur", pokedex:3, type1:"grass", type2:"poison", level:7, levelPlus:0, base:8, basePlus:0, exp:0, expPlus:0, stage:3, line:"bulbasaur", evolve:0, shiny:0, player: 0, remove: 0};
 let squirtle = {name:"Squirtle", pokedex:4, type1:"water", type2:"none", level:5, levelPlus:0, base:4, basePlus:0, exp:0, expPlus:0, stage:1, line:"squirtle", evolve:0, shiny:0, player: 0, remove: 0};
 let wartortle = {name:"Wartortle", pokedex:5, type1:"water", type2:"none", level:7, levelPlus:0, base:7, basePlus:0, exp:0, expPlus:0, stage:2, line:"squirtle", evolve:0, shiny:0, player: 0, remove: 0};
 let blastoise = {name:"Blastoise", pokedex:6, type1:"water", type2:"none", level:7, levelPlus:0, base:8, basePlus:0, exp:0, expPlus:0, stage:3, line:"squirtle", evolve:0, shiny:0, player: 0, remove: 0};
@@ -386,11 +386,8 @@ function buildCaughtObjects() {
         let shiny = caught[i].shiny;
         let evolve = caught[i].evolve;
         let stage = caught[i].stage;
-        let baseSet = caught[i].baseSet;
-        let baseSetPlus = caught[i].baseSetPlus;
-        let levelSet = caught[i].levelSet;
-        let levelSetPlus = caught[i].levelSetPlus;
 
+        // caughtObjectFlag is set to 1 if lvl, atk, or exp are set manually
         // Add to base if pokemon is evolved
         if (evolve == 2) {
             base += 5;
@@ -434,10 +431,33 @@ function buildCaughtObjects() {
             }
         }
 
-        // CheckLevel for local object here???
-        // expPlus should remain consistent on global object
-        // inherited exp should update lvl and atk locally. Not globally.
-        // need new function for checking level locally after global check?
+        // check level after adding inherited experience to local variable exp
+        if (level < 10) {
+            if (exp >= 10) {
+                exp -= 10;
+                level++;
+                base++;
+            }
+        }
+        else if (level < 15) {
+            if (exp >= 15) {
+                exp -= 15;
+                level++;
+                base++;
+            }
+        }
+        else if (level < 20) {
+            if (exp >= 20) {
+                exp -= 20;
+                level++;
+                base++;
+            }
+        }
+        // Level cap
+        if (level >= 20) {
+            exp = 0;
+            level = 20;
+        }
 
         // build object
         obj.name = name;
@@ -781,16 +801,17 @@ function setLvl(pkmn) {
         for (i = 0; i < caught.length; i++) {
             if (caught[i].name == pkmn) {
                 // set pokemon's baseLevelPlus value to amount - base
-                caught[i].baseLevelPlus = parseInt(amount) - caught[i].level;
-                // set amount to the pokemon's level value
+                //caught[i].baseLevelPlus = parseInt(amount) - caught[i].level;
+                // set amount to the pokemon's level value 
+                caught[i].levelPlus += parseInt(amount) - caught[i].level;
+                console.log("hello " + caught[i].levelPlus);
                 caught[i].level = parseInt(amount);
             }
         }
     }
     // check levels, rebuild caughtObjects, and repopulate full list
     checkLevel();
-    buildCaughtObjects(setLvlFlag);
-    buildCaughtObjects(setLvlFlag);
+    buildCaughtObjects();
     addToFullList();
 }
 
@@ -807,16 +828,17 @@ function setAtk(pkmn) {
         for (i = 0; i < caught.length; i++) {
             if (caught[i].name == pkmn) {
                 // set pokemon's baseSetPlus value to amount - base
-                caught[i].baseSetPlus = parseInt(amount) - caught[i].base;
+                //caught[i].baseSetPlus = parseInt(amount) - caught[i].base;
                 // set pokemon's base value to amount
+                caught[i].basePlus += parseInt(amount) - caught[i].base;
+                console.log("hello " + caught[i].basePlus);
                 caught[i].base = parseInt(amount);
             }
         }
     }
     // check levels, rebuild caughtObjects (pass setAtkFlag), and repopulate full list
     checkLevel();
-    buildCaughtObjects(setAtkFlag);
-    buildCaughtObjects(setAtkFlag);
+    buildCaughtObjects();
     addToFullList();
 }
 
@@ -832,6 +854,15 @@ function setExp(pkmn) {
         for (i = 0; i < caught.length; i++) {
             if (caught[i].name == pkmn) {
                 // set amount to the pokemon's exp value
+                if (parseInt(amount) >= caught[i].exp) {
+                    caught[i].expPlus = parseInt(amount) - caught[i].exp;
+                    console.log("hello " + caught[i].expPlus);
+                } 
+                // inputted amount is less than current exp. "+="" instead of "="
+                else {
+                    caught[i].expPlus += parseInt(amount) - caught[i].exp;
+                    console.log("hello " + caught[i].expPlus);
+                }
                 caught[i].exp = parseInt(amount);
             }
         }
@@ -902,7 +933,6 @@ function hideShowSetStats() {
     }
 
     // rebuild caught object array for captured pokemon
-    buildCaughtObjects();
     buildCaughtObjects();
     // add caught pokemon to visible list
     addToFullList();
