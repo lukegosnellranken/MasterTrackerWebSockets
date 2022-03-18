@@ -789,7 +789,6 @@ function addExp(pkmn) {
 }
 
 function setLvl(pkmn) {
-    let setLvlFlag = "lvl";
     // pkmn = p.name from experience()
     // create text input for caught pokemon
     let input = document.getElementById(pkmn.toLowerCase() + "-input");
@@ -800,12 +799,29 @@ function setLvl(pkmn) {
         // iterate through all items in caught array to find the pokemon with the correct name value
         for (i = 0; i < caught.length; i++) {
             if (caught[i].name == pkmn) {
-                // set pokemon's baseLevelPlus value to amount - base
-                //caught[i].baseLevelPlus = parseInt(amount) - caught[i].level;
-                // set amount to the pokemon's level value 
+                // reset levelPlus of previous stages
+                if (caught[i].evolve == 2) {
+                    for (let i2 = 0; i2 < caught.length; i2++) {
+                        if (caught[i2].line == caught[i].line && caught[i2].stage == 2) {
+                            caught[i2].levelPlus = 0;
+                        }
+                        else if (caught[i2].line == caught[i].line && caught[i2].stage == 1) {
+                            caught[i2].levelPlus = 0;
+                        }
+                    }
+                }
+                else if (caught[i].evolve == 1) {
+                    for (let i3 = 0; i3 < caught.length; i3++) {
+                        if (caught[i3].line == caught[i].line && caught[i3].stage == 1) {
+                            caught[i3].levelPlus = 0;
+                        }
+                    }
+                }
+                // set current pokemon levelPlus to add difference between inputted amount and current pokemon's level
                 caught[i].levelPlus += parseInt(amount) - caught[i].level;
-                console.log("hello " + caught[i].levelPlus);
+                // set current pokemon's level to inputted amount
                 caught[i].level = parseInt(amount);
+                console.log(caught[i].name + " " + caught[i].level + " " + caught[i].levelPlus);
             }
         }
     }
@@ -816,7 +832,6 @@ function setLvl(pkmn) {
 }
 
 function setAtk(pkmn) {
-    let setAtkFlag = "atk";
     // pkmn = p.name from experience()
     // create text input for caught pokemon
     let input = document.getElementById(pkmn.toLowerCase() + "-input");
@@ -827,16 +842,33 @@ function setAtk(pkmn) {
         // iterate through all items in caught array to find the pokemon with the correct name value
         for (i = 0; i < caught.length; i++) {
             if (caught[i].name == pkmn) {
-                // set pokemon's baseSetPlus value to amount - base
-                //caught[i].baseSetPlus = parseInt(amount) - caught[i].base;
-                // set pokemon's base value to amount
+                // reset basePlus of previous stages
+                if (caught[i].evolve == 2) {
+                    for (let i2 = 0; i2 < caught.length; i2++) {
+                        if (caught[i2].line == caught[i].line && caught[i2].stage == 2) {
+                            caught[i2].basePlus = 0;
+                        }
+                        else if (caught[i2].line == caught[i].line && caught[i2].stage == 1) {
+                            caught[i2].basePlus = 0;
+                        }
+                    }
+                }
+                else if (caught[i].evolve == 1) {
+                    for (let i3 = 0; i3 < caught.length; i3++) {
+                        if (caught[i3].line == caught[i].line && caught[i3].stage == 1) {
+                            caught[i3].basePlus = 0;
+                        }
+                    }
+                }
+                // set current pokemon basePlus to add difference between inputted amount and current pokemon's base
                 caught[i].basePlus += parseInt(amount) - caught[i].base;
-                console.log("hello " + caught[i].basePlus);
+                // set current pokemon's base to inputted amount
                 caught[i].base = parseInt(amount);
+                console.log(caught[i].name + " " + caught[i].base + " " + caught[i].basePlus);
             }
         }
     }
-    // check levels, rebuild caughtObjects (pass setAtkFlag), and repopulate full list
+    // check levels, rebuild caughtObjects, and repopulate full list
     checkLevel();
     buildCaughtObjects();
     addToFullList();
