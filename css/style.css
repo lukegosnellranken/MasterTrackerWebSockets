@@ -21,6 +21,10 @@ body {
     text-align: center;
 }
 
+.select2-selection {
+    width: 100% !important;
+}
+
 .addAndRemove {
     display: flex;
     justify-content: center;
