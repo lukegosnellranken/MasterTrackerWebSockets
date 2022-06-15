@@ -240,6 +240,9 @@ function populateAll() {
 }
 
 function populateDropdown() {
+    // reset width of dropdown element
+    selectPokemon.setAttribute("width","100%");
+
     // depopulate Add dropdown
     let i, L = selectPokemon.options.length - 1;
     for(i = L; i >= 0; i--) {
